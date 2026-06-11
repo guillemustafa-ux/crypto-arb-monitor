@@ -158,11 +158,13 @@ def _crypto_table(state: MonitorState) -> str:
 
 
 def _opp_rows(opps: list, threshold: float, limit: int = 8) -> str:
-    if not opps:
-        return ('<tr><td colspan="4" style="text-align:center;color:#666">'
-                'Sin spreads positivos en este momento</td></tr>')
+    # Solo se muestran oportunidades cuya ganancia neta supera el umbral.
+    shown = [o for o in opps if o.net_pct >= threshold]
+    if not shown:
+        return ('<tr><td colspan="3" style="text-align:center;color:#666">'
+                f'Sin oportunidades ≥ {threshold:.2f}% en este momento</td></tr>')
     rows = []
-    for o in opps[:limit]:
+    for o in shown[:limit]:
         rows.append(f"""
       <tr>
         <td>{o.label}</td>

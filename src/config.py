@@ -82,7 +82,7 @@ def load_config() -> Config:
         ccl_bond=os.getenv("CCL_BOND", "al30").strip().lower(),
         bond_term=os.getenv("BOND_TERM", "24hs").strip().lower(),
         poll_interval=int(os.getenv("POLL_INTERVAL", "60")),
-        min_net_pct_a=float(os.getenv("MIN_NET_PCT_A", "1.0")),
+        min_net_pct_a=float(os.getenv("MIN_NET_PCT_A", "0.5")),
         min_net_pct_b=float(os.getenv("MIN_NET_PCT_B", "0.5")),
         b_modes=b_modes,
         alert_cooldown_min=int(os.getenv("ALERT_COOLDOWN_MIN", "15")),
