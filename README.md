@@ -32,7 +32,7 @@ en el `.env`.
 
 ## Stack
 
-Python · FastAPI · httpx · SQLite (aiosqlite) · Telegram Bot API · Railway
+Python · FastAPI · httpx · SQLite (aiosqlite) · Telegram Bot API · Render / Fly.io / Railway
 
 ## Estructura
 
@@ -50,7 +50,7 @@ crypto-arb-monitor/
 │   └── dashboard.py       # dashboard web + endpoints JSON
 ├── requirements.txt
 ├── .env.example
-├── railway.json / Procfile
+├── render.yaml / railway.json / Procfile
 └── README.md
 ```
 
@@ -101,14 +101,38 @@ Abrir **http://localhost:8000**.
 Endpoints JSON: `/api/status`, `/api/dolar`, `/api/crypto`, `/api/frente-a`,
 `/api/frente-b`, `/api/opportunities`.
 
-## Deploy en Railway
+## Deploy
 
-1. Crear proyecto desde el repo (Railway detecta Python vía Nixpacks; usa
+El servicio lee `PORT` del entorno y corre el loop + dashboard en un solo proceso,
+así que funciona en cualquier PaaS de Python.
+
+### Render (recomendado, gratis, sin CLI)
+
+1. En [dashboard.render.com](https://dashboard.render.com) → **New → Blueprint** y
+   conectá este repo. Render detecta [`render.yaml`](render.yaml) y crea el servicio solo.
+2. (Opcional) Cargá `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID` en **Environment**.
+3. Render inyecta `PORT` automáticamente.
+
+> ⚠️ El plan **free de Render duerme** el servicio tras ~15 min sin visitas: el loop
+> y las alertas corren mientras el dashboard tenga tráfico. Para un monitor **24/7**
+> usá Fly.io (abajo) o un plan pago.
+
+### Fly.io (always-on)
+
+```bash
+flyctl auth login          # login único en el navegador
+flyctl launch --no-deploy  # genera fly.toml (elegí región, sin DB)
+flyctl secrets set TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=...
+flyctl deploy
+```
+
+### Railway
+
+1. Crear proyecto desde el repo (detecta Python vía Nixpacks; usa
    `Procfile` / `railway.json` → `python main.py`).
-2. Cargar las variables del `.env` en **Variables**.
+2. Cargar las variables en **Variables**.
 3. Para que el **historial sobreviva** redeploys: agregar un **Volume** montado en
-   `/data` y setear `DB_PATH=/data/arb.db`.
-4. Railway inyecta `PORT` automáticamente.
+   `/data` y setear `DB_PATH=/data/arb.db`. Railway inyecta `PORT` automáticamente.
 
 ## Agregar plataformas o dólares
 

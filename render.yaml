@@ -1,0 +1,26 @@
+# Blueprint de Render — deploy automático desde GitHub.
+# En https://dashboard.render.com → New → Blueprint → conectá este repo.
+# Render detecta este archivo y crea el servicio sin más configuración.
+services:
+  - type: web
+    name: crypto-arb-monitor
+    runtime: python
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      # Umbrales de oportunidad (Frente A = tradicional↔cripto, B = cripto↔cripto).
+      - key: MIN_NET_PCT_A
+        value: "0.5"
+      - key: MIN_NET_PCT_B
+        value: "0.5"
+      - key: POLL_INTERVAL
+        value: "60"
+      # Telegram (opcional): cargalos en el dashboard de Render. Sin estos, el
+      # monitor corre igual pero no envía alertas.
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
