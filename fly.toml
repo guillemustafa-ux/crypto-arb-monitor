@@ -1,0 +1,30 @@
+# Configuración de Fly.io — monitor always-on (la VM no se apaga).
+# Deploy: flyctl deploy   |   Estado: flyctl status   |   Logs: flyctl logs
+app = "crypto-arb-monitor"
+primary_region = "gru"   # São Paulo (eze/Buenos Aires no disponible en esta cuenta)
+
+[build]
+
+[env]
+  DB_PATH = "/data/arb.db"   # historial SQLite en el volumen persistente
+  MIN_NET_PCT_A = "0.5"
+  MIN_NET_PCT_B = "0.5"
+  POLL_INTERVAL = "60"
+  # TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID se cargan como secrets, no acá.
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false    # NO apagar por inactividad (clave para 24/7)
+  auto_start_machines = true
+  min_machines_running = 1      # siempre al menos 1 máquina prendida
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
+  cpus = 1
+
+# Volumen persistente para que el historial sobreviva redeploys/restarts.
+[mounts]
+  source = "arb_data"
+  destination = "/data"

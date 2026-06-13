@@ -1,0 +1,33 @@
+name: keep-alive
+
+# Mantiene despierto el servicio free de Render: el plan gratuito lo duerme tras
+# ~15 min sin tráfico, lo que frena el loop de monitoreo. Este job le pega a
+# /api/status cada ~10 min para que no se duerma.
+#
+# Requisito: definir la variable RENDER_URL en
+#   GitHub → Settings → Secrets and variables → Actions → Variables → New variable
+#   name: RENDER_URL   value: https://<tu-servicio>.onrender.com  (sin barra final)
+#
+# Nota: el cron de GitHub Actions puede demorarse bajo carga; para 24/7 estricto,
+# sumá además un monitor en https://uptimerobot.com apuntando a la misma URL.
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # cada 10 minutos
+  workflow_dispatch:          # permite dispararlo a mano
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping al servicio de Render
+        run: |
+          URL="${{ vars.RENDER_URL }}"
+          if [ -z "$URL" ]; then
+            echo "::warning::Falta la variable RENDER_URL (Settings → Actions → Variables). Skipping."
+            exit 0
+          fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 40 "$URL/api/status" || echo "000")
+          echo "Ping $URL/api/status -> HTTP $code"
+          # No fallar el workflow por un cold start lento (502/503 momentáneo).
+          if [ "$code" = "200" ]; then echo "OK, servicio despierto"; else echo "::warning::respuesta $code (puede ser cold start)"; fi

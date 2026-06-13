@@ -1,0 +1,31 @@
+# Control de versiones / config local
+.git
+.gitignore
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Base de datos local (en Fly el historial va al volumen /data)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs / artefactos de prueba
+server.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Docs y configs de otros PaaS (no hacen falta en la imagen)
+README.md
+render.yaml
+railway.json
+Procfile
