@@ -7,6 +7,9 @@ oportunidades, **no ejecuta operaciones**.
 Usa la API pública de [CriptoYa](https://criptoya.com/api) para cotizaciones del
 dólar y de USDT/ARS (spot y P2P).
 
+> **🔴 Demo en vivo:** **https://crypto-arb-monitor-4wd0.onrender.com**
+> _(alojado en Render free; si estuvo inactivo, el primer acceso puede tardar ~30 s en despertar)._
+
 ## ¿Qué compara?
 
 ### Frente A — Tradicional vs Cripto
@@ -57,7 +60,7 @@ crypto-arb-monitor/
 ## Instalación local
 
 ```bash
-git clone <repo>
+git clone https://github.com/guillemustafa-ux/crypto-arb-monitor
 cd crypto-arb-monitor
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
